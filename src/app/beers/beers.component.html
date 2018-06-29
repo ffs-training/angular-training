@@ -1,0 +1,23 @@
+<form>
+
+  <div>
+    <label>銘柄</label>
+    <input name="text" type="text" [(ngModel)]="form.name"/>
+  </div>
+
+  <div>
+    <label>説明文</label>
+    <input name="text" type="text" [(ngModel)]="form.description"/>
+  </div>
+
+  <div>
+    <input name="done" type="button" value="追加" (click)="onDone($event)"/>
+  </div>
+</form>
+
+<ng-template ngFor let-beer [ngForOf]="myFavoriteBeers">
+<app-beer [beer]="beer"></app-beer>
+</ng-template>
+
+
+<button type="button" (click)="jumpToHome()">ホームへ</button>

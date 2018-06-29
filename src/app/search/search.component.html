@@ -1,0 +1,51 @@
+<p>
+  Books Search Site
+</p>
+
+<!-- Searchボタンクリックイベント submit(string) 実装してね -->
+<form #myForm="ngForm" (ngSubmit)="submit(formData.query)">
+  <div>
+    <!-- テキストボックスの入力データを受け取るプロパティ formData.query 実装してね -->
+    <input id="query" name="query" type="text" [(ngModel)]="formData.query"/>
+    <input type="submit" value="Search"/>
+  </div>
+</form>
+
+<div>
+  <H2>Result</H2>
+
+  <!-- 今回はTableの要素をngForで増やしてみました -->
+  <table>
+
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Authors</th>
+      <th>Title</th>
+      <th>Publisher</th>
+      <th>PublishedDate</th>
+      <th>Description</th>
+      <th>Pages</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <!-- 表示するデータ books 実装してね -->
+    <ng-template ngFor let-book [ngForOf]="books" let-i="index">
+      <tr>
+        <td>{{i + 1}}</td>
+        <td>{{book.authors}}</td>
+        <td>{{book.title}}</td>
+        <td>{{book.publisher}}</td>
+        <td>{{book.publishedDate}}</td>
+        <td>{{book.description}}</td>
+        <td>{{book.pageCount}}</td>
+      </tr>
+    </ng-template>
+
+    </tbody>
+
+  </table>
+
+</div>
