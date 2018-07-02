@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
 
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/throw';
-import { Observable } from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {map, catchError} from 'rxjs/operators';
 
 /*
  今回はclass（DTO）を作らず、型定義だけ用意しました。
@@ -23,7 +22,7 @@ export interface Book {
   publisher: string;
   publishedDate: string;
   description: string;
-  pageCount: number
+  pageCount: number;
 }
 
 // Booksの初期値（file-scope static const）
@@ -49,7 +48,7 @@ export class BookService {
 
     const params: HttpParams = new HttpParams().set('q', query);
 
-    const observable: Observable<any> = this.http.get(url, { params: params });
+    const observable: Observable<any> = this.http.get(url, {params: params});
 
     // 処理を別関数に移譲する場合、observableを渡して繋ぐ（ストリームの考え方）
     return this.getResponse(observable);
@@ -63,24 +62,26 @@ export class BookService {
       });
     };
 
-    return observable.map((res: any): Array<Book> => {
-      const items: Array<any> = res.items;
+    return observable.pipe(
+      map((res: any): Array<Book> => {
+        const items: Array<any> = res.items;
 
-      return items.map((value: any): Book => {
-        const v: any = value.volumeInfo;
-        return <Book>{
-          // 型がany = null | undefinedかもしれないということ
-          // つまり、nullチェックをキッチリ入れないとコード品質を担保できない too bad...
-          // そして、カバレッジ100%という制約があると、単体テストは…
-          // 型はキッチリ書こう
-          authors: v.authors ? splitAuthors(v.authors) : '',
-          title: v.title ? v.title : '',
-          publisher: v.publisher ? v.publisher : '',
-          publishedDate: v.publishedDate ? v.publishedDate : '',
-          description: v.description ? v.description : '',
-          pageCount: v.pageCount ? Number(v.pageCount) : 0
-        };
-      });
-    });
+        return items.map((value: any): Book => {
+          const v: any = value.volumeInfo;
+          return <Book>{
+            // 型がany = null | undefinedかもしれないということ
+            // つまり、nullチェックをキッチリ入れないとコード品質を担保できない too bad...
+            // そして、カバレッジ100%という制約があると、単体テストは…
+            // 型はキッチリ書こう
+            authors: v.authors ? splitAuthors(v.authors) : '',
+            title: v.title ? v.title : '',
+            publisher: v.publisher ? v.publisher : '',
+            publishedDate: v.publishedDate ? v.publishedDate : '',
+            description: v.description ? v.description : '',
+            pageCount: v.pageCount ? Number(v.pageCount) : 0
+          };
+        });
+      })
+    );
   }
 }
